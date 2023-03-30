@@ -1,0 +1,6 @@
+{
+  "name": "Carrier Security Dependency Plugin",
+  "version": "0.1",
+  "depends_on": ["shared", "projects", "tasks", "theme"],
+  "init_after": []
+}
