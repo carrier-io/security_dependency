@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import Optional
 
 from sqlalchemy.sql import func, LABEL_STYLE_TABLENAME_PLUS_COL
+from sqlalchemy import desc
 
 from ..models.tests import SecurityDependencyTests
 from ..models.pd.security_test import SecurityTestParams, SecurityTestCommon
@@ -36,6 +38,50 @@ class RPC:
             SecurityDependencyResults.project_id == project_id,
         )
         return dict(zip([i['name'] for i in q.column_descriptions], q.first()))
+
+    @web.rpc('infrastructure_security_get_tests')
+    @rpc_tools.wrap_exceptions(RuntimeError)
+    def security_get_tests(self, project_id: int) -> dict:
+        return SecurityDependencyTests.query.filter_by(project_id=project_id).all()
+
+    @web.rpc('infrastructure_security_get_reports')
+    @rpc_tools.wrap_exceptions(RuntimeError)
+    def security_get_reports(
+            self, project_id: int,
+            start_time: datetime | None = None,
+            end_time: datetime | None = None,
+            unique: bool = False,
+    ) -> list[SecurityDependencyResults]:
+        """ Gets all reports filtered by time"""
+
+        def _get_unique_reports(objects: list[SecurityDependencyResults]) -> list[SecurityDependencyResults]:
+            unique_combinations = {}
+            for obj in objects:
+                # combination = (obj.test_uid, obj.environment, obj.type)
+                combination = (obj.test_uid, obj.environment)
+                stored_obj = unique_combinations.get(combination)
+                if stored_obj is None or obj.start_date > stored_obj.start_date:
+                    unique_combinations[combination] = obj
+
+            return list(unique_combinations.values())
+
+        query = SecurityDependencyResults.query.filter(
+            SecurityDependencyResults.project_id == project_id,
+        ).order_by(
+            desc(SecurityDependencyResults.start_date)
+        )
+
+        if start_time:
+            query = query.filter(SecurityDependencyResults.start_date >= start_time.isoformat())
+        #
+        # if end_time:
+        #     query = query.filter(SecurityDependencyResults.end_time <= end_time.isoformat())
+
+        reports = query.all()
+        if unique:
+            reports = _get_unique_reports(reports)
+
+        return reports
 
     @web.rpc('security_dependency_test_create_test_parameters', 'parse_test_parameters')
     @rpc_tools.wrap_exceptions(ValidationError)
