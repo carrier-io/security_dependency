@@ -5,6 +5,7 @@ from pydantic import BaseModel, validator, AnyUrl, root_validator
 from ....shared.models.pd.test_parameters import TestParameter, TestParamsBase  # todo: workaround for this import
 from pylon.core.tools import log
 from tools import rpc_tools
+from ..tests import SecurityDependencyTests
 
 
 _required_params = set()
@@ -78,12 +79,6 @@ class SecurityTestCommon(BaseModel):
     name: str
     description: str
     source: dict
-
-    @root_validator
-    def set_uuid(cls, values):
-        if not values.get('test_uid'):
-            values['test_uid'] = str(uuid4())
-        return values
 
     @root_validator(pre=True, allow_reuse=True)
     def empty_str_to_none(cls, values):
