@@ -21,13 +21,13 @@ from pylon.core.tools import log  # pylint: disable=E0611,E0401
 
 
 class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.RpcMixin):
-    """ Security Tests: SAST """
+    """ Security Tests: Dependency """
     __tablename__ = "security_dependency_tests"
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, unique=False, nullable=False)
     project_name = Column(String(64), nullable=False)
     test_uid = Column(String(64), unique=True, nullable=False)
-    name = Column(String(128), nullable=False)
+    name = Column(String(128), nullable=False, unique=True)
     description = Column(String(256), nullable=True, unique=False)
     test_parameters = Column(ARRAY(JSON), nullable=True)
     integrations = Column(JSON, nullable=True)
@@ -84,7 +84,6 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
             from flask import current_app
             global_sast_settings = dict()
             global_sast_settings["max_concurrent_scanners"] = 1
-            loki_settings = current_app.config["CONTEXT"].settings["loki"]
 
             actions_config = {}
             if "git_" in self.source.get("name"):
@@ -196,7 +195,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
 
 
             reporters_config["centry_loki"] = {
-                "url": loki_settings["url"],
+                "url": "{{secret.loki_host}}",
                 "labels": {
                     "project": str(self.project_id),
                     "build_id": str(self.build_id),
