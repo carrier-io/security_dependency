@@ -306,7 +306,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
 
         if output == "cc":
             channel = self.scan_location
-            if channel == "Carrier default config":
+            if channel == "Carrier default config" or channel.strip() == "":
                 channel = "default"
             #
             execution_json = {
