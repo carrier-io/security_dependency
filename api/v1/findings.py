@@ -143,7 +143,7 @@ class API(Resource):
                 excluded_finding = sum([1 for issue in issues if issue.status == "ignored"])
                 valid_finding = sum([1 for issue in issues if issue.status == "valid"])
 
-                finding["status"] = "false positive" if false_positive > 0 else "not_defined"
+                finding["status"] = "false_positive" if false_positive > 0 else "not_defined"
                 finding["status"] = "ignored" if excluded_finding > 0 else "not_defined"
                 finding["status"] = "valid" if valid_finding > 0 else "not_defined"
 
