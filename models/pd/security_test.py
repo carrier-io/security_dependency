@@ -80,6 +80,12 @@ class SecurityTestCommon(BaseModel):
     description: str
     source: dict
 
+    @root_validator
+    def set_uuid(cls, values):
+        if not values.get('test_uid'):
+            values['test_uid'] = str(uuid4())
+        return values
+
     @root_validator(pre=True, allow_reuse=True)
     def empty_str_to_none(cls, values):
         removed = []
@@ -96,4 +102,3 @@ class SecurityTestCommon(BaseModel):
             'name': value['name'],
             **validated.dict()
         }
-
