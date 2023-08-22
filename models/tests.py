@@ -195,7 +195,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
 
 
             reporters_config["centry_loki"] = {
-                "url": f'{vault_client.unsecret("{{secret.loki_host}}")}/api/prom/push',
+                "url": f'{vault_client.unsecret("{{secret.loki_host}}")}/loki/api/prom/push',
                 "labels": {
                     "project": str(self.project_id),
                     "build_id": str(self.build_id),
