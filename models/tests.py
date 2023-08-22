@@ -114,9 +114,9 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
                         "object": self.source.get("file_meta", {}).get("filename", None),
                         "target": "/tmp/code",
                         "delete": False
-                    } 
+                    }
                 }
-            
+
             if self.source.get("name") == "local":
                 actions_config = {
                     "galloper_artifact": {
@@ -163,7 +163,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
                     log.warning(f'Cannot find processor config rpc for {processor_name}')
 
 
-            tholds = {}    
+            tholds = {}
             for threshold in thresholds:
                 if int(threshold['value']) > -1:
                     tholds[threshold['name'].capitalize()] = {
@@ -174,7 +174,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
             processing_config["quality_gate_sast"] = {
                 "thresholds": tholds
             }
-        
+
             #
             # Reporters
             #
@@ -195,7 +195,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
 
 
             reporters_config["centry_loki"] = {
-                "url": "{{secret.loki_host}}",
+                "url": vault_client.unsecret("{{secret.loki_host}}"),
                 "labels": {
                     "project": str(self.project_id),
                     "build_id": str(self.build_id),
@@ -206,11 +206,11 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
             reporters_config["centry_status"] = {
                 "url": vault_client.unsecret(
                     "{{secret.galloper_url}}",
-                    
+
                 ),
                 "token": vault_client.unsecret(
                     "{{secret.auth_token}}",
-                    
+
                 ),
                 "project_id": str(self.project_id),
                 "test_id": str(self.results_test_id),
@@ -219,11 +219,11 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
             reporters_config["centry"] = {
                 "url": vault_client.unsecret(
                     "{{secret.galloper_url}}",
-                    
+
                 ),
                 "token": vault_client.unsecret(
                     "{{secret.auth_token}}",
-                    
+
                 ),
                 "project_id": str(self.project_id),
                 "test_id": str(self.results_test_id),
@@ -262,12 +262,12 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
             "cmd": f"run -b centry:{job_type}_{self.test_uid} -s {job_type}",
             "GALLOPER_URL": vault_client.unsecret(
                 "{{secret.galloper_url}}",
-                
+
             ),
             "GALLOPER_PROJECT_ID": f"{self.project_id}",
             "GALLOPER_AUTH_TOKEN": vault_client.unsecret(
                 "{{secret.auth_token}}",
-                
+
             ),
         }
         if self.source.get("name") == "local":
@@ -276,15 +276,15 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
         cc_env_vars = {
             "RABBIT_HOST": vault_client.unsecret(
                 "{{secret.rabbit_host}}",
-                
+
             ),
             "RABBIT_USER": vault_client.unsecret(
                 "{{secret.rabbit_user}}",
-                
+
             ),
             "RABBIT_PASSWORD": vault_client.unsecret(
                 "{{secret.rabbit_password}}",
-                
+
             ),
             "REPORT_ID": str(self.results_test_id),
             "build_id": str(self.build_id),
