@@ -90,7 +90,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
                 actions_config = {
                     "git_clone": {
                         "source": self.source.get("repo"),
-                        "branch": self.source.get("branch"),
+                        "branch": self.source.get("repo_branch"),
                         "target": "/tmp/code"
                     }
                 }
