@@ -256,7 +256,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
         #
         job_type = "dependency"
         # job_type = "sast"
-        container = f"getcarrier/sast:latest"
+        container = f"getcarrier/sast:beta-2.0"
         # container = f"getcarrier/sast_local"
         parameters = {
             "cmd": f"run -b centry:{job_type}_{self.test_uid} -s {job_type}",
