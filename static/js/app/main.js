@@ -118,7 +118,12 @@ var tableFormatters = {
 
         "click #test_command": function (e, value, row, index) {
             url = `${window.location.origin}/api/v1/security_dependency/dispatcher/${row.project_id}/dependency_${row.test_uid}?type=docker`
-            window.open(url, '_blank').focus();
+            fetch(url)
+              .then((response) => response.text())
+              .then((text) => {
+                navigator.clipboard.writeText(text);
+                showNotify("SUCCESS", "Copied run command to clipboard")
+              });
         },
 
         "click #test_delete": function (e, value, row, index) {
