@@ -121,7 +121,7 @@ var tableFormatters = {
             fetch(url)
               .then((response) => response.text())
               .then((text) => {
-                navigator.clipboard.writeText(text.slice(1, -1).replace('\"', '"'));
+                navigator.clipboard.writeText(text.trim().slice(1, -1).replace('\\"', '"'));
                 showNotify("SUCCESS", "Copied run command to clipboard")
               });
         },
