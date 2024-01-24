@@ -335,7 +335,7 @@ class SecurityDependencyTests(db_tools.AbstractBaseMixin, db.Base, rpc_tools.Rpc
                    f"-e galloper_url={vault_client.unsecret('{{secret.galloper_url}}')} " \
                    f"-e token=\"{vault_client.unsecret('{{secret.auth_token}}')}\" " \
                    f"{control_tower} " \
-                   f"-tid {self.test_uid} -qg true"
+                   f"-tid {self.test_uid}"
 
 
         if output == "cc":
